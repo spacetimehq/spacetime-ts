@@ -22,7 +22,13 @@ export function getCollectionShortNameFromId(id: string): string {
 }
 
 export function encodeBase64(value: Uint8Array): string {
-  return btoa(String.fromCharCode.apply(null, value as unknown as number[]))
+  // safe base64 encoding which works even with larger arrays
+  // see https://github.com/mathiasbynens/base64/issues/13
+  // solution inspired by https://github.com/WebReflection/uint8-to-base64/blob/master/esm/index.js
+  const output = [];
+  for (let i = 0; i < value.length; i++)
+    output.push(String.fromCharCode(value[i]));
+  return btoa(output.join(''));
 }
 
 export function decodeBase64(value: string): Uint8Array {
