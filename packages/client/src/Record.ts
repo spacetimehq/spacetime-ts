@@ -1,3 +1,9 @@
+/**
+ * This module contains types and functions for the actual instances of collections.
+ *
+ * @module
+ */
+
 import { Collection } from './Collection'
 import { SubscriptionErrorFn, SubscriptionFn } from './Subscription'
 import { CollectionRecordSnapshotRegister, Request, CallArgs, SenderRawRecordResponse, Block } from './types'
@@ -11,6 +17,9 @@ export type CollectionRecordReference = {
   id: string
 }
 
+/**
+ * This represents an instance of a collection.
+ */
 export class CollectionRecord<T> {
   id: string
   private collection: Collection<T>
@@ -24,6 +33,13 @@ export class CollectionRecord<T> {
     this.onSnapshotRegister = onSnapshotRegister
   }
 
+  /**
+   * Calls a function on this collection record.
+   * The function must be a custom function defined in the collection schema.
+   *
+   * @see [Write Data](https://polybase.xyz/docs/write-data)
+   * @see [Delete Data](https://polybase.xyz/docs/delete-data)
+   */
   call = async (functionName: string, args: CallArgs = []): Promise<CollectionRecordResponse<T, T | null>> => {
     const ast = await this.collection.getAST()
     const isCallPubliclyAccessible = await this.collection.isCallPubliclyAccessible(functionName)
@@ -39,6 +55,12 @@ export class CollectionRecord<T> {
     return new CollectionRecordResponse(this.id, res.data, ast, this.collection, this.client, this.onSnapshotRegister)
   }
 
+  /**
+   * Retrieves the collection record.
+   *
+   * @returns The collection recod.
+   * @see [Read Data](https://polybase.xyz/docs/read)
+   */
   get = async (): Promise<CollectionRecordResponse<T, T | null>> => {
     const ast = await this.collection.getAST()
     const isReadPubliclyAccessible = await this.collection.isReadPubliclyAccessible()
@@ -65,16 +87,27 @@ export class CollectionRecord<T> {
     return `record:${this.collection.id}/${this.id}`
   }
 
+  /**
+   * Listener for updates to this record (after the write is confirmed).
+   *
+   * @see [Listen for updates on a record](https://polybase.xyz/docs/read#listen-for-updates-on-a-record)
+   */
   onSnapshot = (fn: SubscriptionFn<CollectionRecordResponse<T>>, errFn?: SubscriptionErrorFn) => {
     return this.onSnapshotRegister(this, fn, errFn)
   }
 
+  /**
+   * The {@link Request} object for this collection record.
+   */
   request = (): Request => ({
     url: `/collections/${encodeURIComponent(this.collection.id)}/records/${encodeURIComponent(this.id)}`,
     method: 'GET',
   })
 }
 
+/**
+ * The collection record data, as returned by the Polybase service.
+ */
 export class CollectionRecordResponse<T, NT extends T | null = T> extends CollectionRecord<T> {
   data: NT
   block: Block
@@ -100,6 +133,6 @@ export class CollectionRecordResponse<T, NT extends T | null = T> extends Collec
 }
 
 /**
- * @deprecated use CollectionRecord
+ * @deprecated use CollectionRecord instead
  */
 export const Doc = CollectionRecord

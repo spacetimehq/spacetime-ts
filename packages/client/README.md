@@ -49,3 +49,19 @@ To run E2E tests, ensure that [Polybase](https://github.com/polybase/polybase) i
 ```
 yarn test:e2e
 ```
+
+# Doc
+
+To generate the documentation for the project, run the following command:
+
+```
+  $ npm run doc
+```
+
+or
+
+```
+  $ yarn run doc
+```
+
+This will generate the documentation in the `doc` directory.

@@ -1,3 +1,9 @@
+/**
+ * @module
+ * @see [Filter records](https://polybase.xyz/docs/read#filter-records)
+ * @see [Pagination](https://polybase.xyz/docs/read#pagination)
+ */
+
 import { Client } from './Client'
 import { Collection, QuerySnapshotRegister } from './Collection'
 import { CollectionRecord, CollectionRecordResponse } from './Record'

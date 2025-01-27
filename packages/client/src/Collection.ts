@@ -1,3 +1,8 @@
+/**
+ * @see [Collections](https://polybase.xyz/docs/collections)
+ * @module
+ */
+
 import { CollectionRecord, CollectionRecordResponse } from './Record'
 import { Query, QueryResponse } from './Query'
 import { Subscription, SubscriptionFn, SubscriptionErrorFn, UnsubscribeFn } from './Subscription'
@@ -29,6 +34,9 @@ export class Collection<T> {
   load = async () => {
   }
 
+  /**
+   * returns The collection metadata.
+   */
   getMeta = async (): Promise<CollectionMeta> => {
     if (this.meta) return this.meta
     // Manually get Collection meta, otherwise we would recursively call this function
@@ -44,6 +52,9 @@ export class Collection<T> {
     return this.meta
   }
 
+  /**
+   * @returns The prepared AST for this collection.
+   */
   getAST = async (): Promise<ASTCollection> => {
     // Return cached value if it exists
     if (this.astCache) return this.astCache
@@ -55,10 +66,19 @@ export class Collection<T> {
     return collectionAST
   }
 
+  /**
+   * @returns The short name for this collection.
+   */
   name(): string {
     return getCollectionShortNameFromId(this.id)
   }
 
+  /**
+   * Validate the given collection ast.
+   *
+   * @param data - the data to be validated
+   * @returns Whether validation succeeded (`true`) or not (`false`).
+   */
   validate = async (data: Partial<T>) => {
     const ast = await this.getAST()
     try {
@@ -69,6 +89,10 @@ export class Collection<T> {
     }
   }
 
+  /**
+   * @returns Whether this collection can be read pubclicly (`true) or not (`false`)
+   * @see [Permissions](https://polybase.xyz/docs/permissions)
+   */
   isReadPubliclyAccessible = async (): Promise<boolean> => {
     // Without this, we would recursively call this function
     if (this.id === 'Collection') return true
@@ -76,6 +100,11 @@ export class Collection<T> {
     return this.isCollectionPubliclyAccessible('read')
   }
 
+  /**
+   * @param methodName - the method (as defined in the collection schema).
+   * @returns Whether the method can be called (`true`) on this collection or not (`false`).
+   * @see [Permissions](https://polybase.xyz/docs/permissions)
+   */
   isCallPubliclyAccessible = async (methodName: string) => {
     // Without this, we would recursively call this function
     if (this.id === 'Collection') return true
@@ -104,6 +133,12 @@ export class Collection<T> {
     return hasPublicDirective || hasTypeDirective
   }
 
+  /**
+   * Create a collection record.
+   *
+   * @param args - the data for the new collection.
+   * @returns The newly created collection record.
+   */
   create = async (args: CallArgs = []): Promise<CollectionRecordResponse<T>> => {
     if (!Array.isArray(args)) {
       throw new TypeError('invalid argument: `args` must be an array')
@@ -127,6 +162,12 @@ export class Collection<T> {
     return this.createQuery().get()
   }
 
+  /**
+   * Retrieves the record, for this collection, with the given id.
+   *
+   * @param id - the id of the collection record.:w
+   * @returns The collection record.
+   */
   record = (id: string): CollectionRecord<T> => {
     return new CollectionRecord<T>(id, this, this.client, this.onRecordSnapshotRegister)
   }

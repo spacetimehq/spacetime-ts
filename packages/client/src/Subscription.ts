@@ -7,9 +7,13 @@ export type SubscriptionErrorFn = ((err: PolybaseError) => void)
 export type UnsubscribeFn = (() => void)
 
 export interface SubscriptionOptions {
-  // Default timeout between long poll requests
+  /**
+  * Default timeout between long poll requests.
+   */
   timeout: number
-  // Max timeout after error backoff
+  /**
+  * Max timeout after error backoff.
+   */
   maxErrorTimeout: number
 }
 

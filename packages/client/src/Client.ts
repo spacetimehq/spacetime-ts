@@ -3,13 +3,31 @@ import { AxiosError, AxiosRequestConfig } from 'axios'
 import { createError, createErrorFromAxiosError } from './errors'
 import { QueryValue, Request, RequestParams, Sender, SenderResponse, Signer, SignerResponse } from './types'
 
+/**
+ * The Client configuration.
+ */
 export interface ClientConfig {
+  /** The unique identifier for this client.
+   * @example
+   * ```
+   * polybase@ts/client:v0
+   * ```
+  */
   clientId: string
+  /** The base URL of the Polybase service.
+   * @example
+   * ```
+   * https://testnet.polybase.xyz/v0
+   * ```
+   */
   baseURL: string
 }
 
 type SignatureCache = Record<string, { timeMs: number, sig: SignerResponse }>
 
+/**
+ * The Client used by the Polybase Client for interacting with the Polybase service.
+ */
 export class Client {
   private sender: Sender
   signer?: Signer
@@ -23,6 +41,9 @@ export class Client {
     this.signatureCache = {}
   }
 
+  /**
+   * Returns a new {@link ClientRequest} instance.
+   */
   request = (req: Request): ClientRequest => {
     return new ClientRequest(this.sender, {
       url: req.url,
@@ -54,7 +75,12 @@ export class ClientRequest {
     this.aborter.abort()
   }
 
-  /* Sending a request to the server. */
+  /**
+   *  Send a request to the server.
+   *
+   * @param withAuth - The authentication mode.
+   * @param sigExtraTimeMs - Extra time to sign the request.
+   */
   send = async <T = any>(withAuth: 'none' | 'optional' | 'required', sigExtraTimeMs?: number): Promise<SenderResponse<T>> => {
     try {
       const req = this.req as AxiosRequestConfig
@@ -99,6 +125,7 @@ export class ClientRequest {
     }
   }
 
+  /** @private */
   private getSignature = async (extraTimeMs: number) => {
     if (!this.signer) return ''
 
@@ -138,6 +165,9 @@ export class ClientRequest {
   }
 }
 
+/**
+ * Parse the given request parameters into a {@link Record} object.
+ */
 export function parseParams(params?: RequestParams): Record<string, QueryValue | undefined> {
   if (!params) return {}
   return {

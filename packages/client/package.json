@@ -17,7 +17,8 @@
     "release": "npx np",
     "test": "jest ./src",
     "test:e2e": "jest ./e2e --verbose",
-    "fix": "yarn eslint \"./src/**/*.{ts,tsx}\" --fix"
+    "fix": "yarn eslint \"./src/**/*.{ts,tsx}\" --fix",
+    "doc": "npx typedoc --plugin typedoc-plugin-missing-exports"
   },
   "jest": {
     "preset": "ts-jest",
@@ -46,6 +47,8 @@
     "terser-webpack-plugin": "^5.3.6",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
+    "typedoc": "^0.24.8",
+    "typedoc-plugin-missing-exports": "^2.0.1",
     "typescript": "^4.9.4",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
